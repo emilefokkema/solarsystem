@@ -33,7 +33,8 @@
             this.imageOffsetX = (-xInImage - widthInImage / 2) * scale;
             this.imageOffsetY = (-yInImage - widthInImage / 2) * scale;
             this.imageWidth = imageWidth * scale;
-            this.imageHeight = imageHeight * scale; 
+            this.imageHeight = imageHeight * scale;
+            this.arrowDistance =  this.radius * (10 + 90 * (1 / (this.radius / 20 + 1))) + 100;
             this.imageUrl = imageUrl;
             this.loadImage();
         };
@@ -59,7 +60,7 @@
         Planet.prototype.draw = function(){
             //ctx.fillStyle = "rgba(255,255,255,0.05)";
             //fillCircle(this.distance, 0, this.radius * 1000);
-            ctx.fillStyle = "rgba(255, 255, 0, 0.5)";
+            ctx.fillStyle = "#ff0";
             if(this.image){
               ctx.drawImage(this.image, this.distance + this.imageOffsetX, this.imageOffsetY, this.imageWidth, this.imageHeight);
             }else{
@@ -67,7 +68,7 @@
             }
             
             ctx.save();
-            ctx.translate(this.distance, this.radius + 250);
+            ctx.translate(this.distance, this.arrowDistance);
             ctx.scale(50, 50);
             ctx.beginPath();
             ctx.moveTo(-10, 10);
@@ -76,8 +77,8 @@
             ctx.moveTo(0, 0);
             ctx.lineTo(0, 100);
             ctx.stroke();
-            ctx.fillStyle = "rgba(255, 255, 0, 0.2)";
-            ctx.font = "30px Verdana";
+            //ctx.fillStyle = "rgba(255, 255, 0, 0.2)";
+            ctx.font = "20px Verdana";
             ctx.fillText(this.name, -5, 130);
             ctx.restore();
             //ctx.fillStyle = "rgba(255, 255, 0, 0.2)";
@@ -91,8 +92,8 @@
             new Planet(0.35, 8326, "mercury", "https://space-facts.com/wp-content/uploads/mercury.png", 700, 700, 50, 50, 600),
             new Planet(0.87, 15459, "venus", "https://skyandtelescope.org/wp-content/uploads/Venus_UV_Credit_PLANET-C-Project_Team_600px.jpg", 600, 600, 0, 0, 600),
             new Planet(0.91, 21499, "earth", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/1200px-The_Earth_seen_from_Apollo_17.jpg", 1200, 1200, 65, 61, 1075),
-            new Planet(0.48, 31903, "mars"),
-            new Planet(10.05, 111771, "jupiter"),
+            new Planet(0.48, 31903, "mars", "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/OSIRIS_Mars_true_color.jpg/1200px-OSIRIS_Mars_true_color.jpg", 1200, 1200, 86, 86, 1028),
+            new Planet(10.05, 111771, "jupiter", "https://space-facts.com/wp-content/uploads/jupiter.png", 700, 700, 50, 50, 600),
             new Planet(8.37, 206182, "saturn"),
             new Planet(3.65, 412796, "uranus"),
             new Planet(3.54, 1095327, "neptune"),
@@ -103,11 +104,14 @@
         var scale = 6955;
         
         var gradient = ctx.createLinearGradient(-lightBeamLength, 0, 0, 0);
-        gradient.addColorStop(0, "rgba(255, 255, 0, 0)");
-        gradient.addColorStop(1, "rgba(255, 255, 0, 1)");
+        gradient.addColorStop(0, "rgba(255, 0, 0, 0)");
+        gradient.addColorStop(0.3, "rgba(255, 0, 0, 0.3)");
+        gradient.addColorStop(0.7, "rgba(255, 255, 0, 0.7)");
+        gradient.addColorStop(0.9, "rgba(255, 255, 100, 1)");
+        gradient.addColorStop(1, "rgba(255, 255, 255, 1)");
         ctx.font = "6px Verdana";
         ctx.translate(200, 200);
-        ctx.strokeStyle = "rgba(255, 255, 0, 0.2)";
+        ctx.strokeStyle = "#ff0";
         var startDate = new Date();
         function draw(){
             ctx.clearRect(-Infinity, -Infinity, Infinity, Infinity);
@@ -132,7 +136,12 @@
             ctx.fillText("" + Math.floor(inKm).toString().replace(/.(?=(?:.{3})+$)/g, "$&."), 0, 30)
             ctx.fillText(" km", 50, 30)
             ctx.restore();
-            
+            ctx.save();
+            ctx.font = "30px Verdana";
+            ctx.fillStyle = "#ff0";
+            ctx.fillText("This is some light leaving the sun.", 200, 200);
+            ctx.fillText("Zoom out to see where it is going.", 200, 250);
+            ctx.restore();
             setTimeout(draw, 20);
         }
         
