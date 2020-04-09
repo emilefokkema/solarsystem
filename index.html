@@ -51,7 +51,7 @@
             this.loadImage();
         };
         Planet.prototype.setStartDate = function(startDate){
-            this.lightArrival = +startDate + (this.distance - sunRadius) / lightMillisecond;
+            this.lightArrival = +startDate + (this.distance - Math.sqrt(sunRadius * sunRadius - this.verticalDisplacement * this.verticalDisplacement)) / lightMillisecond;
         };
         Planet.prototype.loadImage = function(){
           var self = this;
