@@ -34,10 +34,11 @@
             var hours = Math.floor(totalSeconds / 3600);
             return "" + (hours > 0 ? hours + " h, " : "") + (minutes > 0 ? minutes + " m, " : "") + seconds + " s";
         }
-        var Planet = function(radius, distance, name, imageData, verticalDisplacement, hasShadow){
+        var Planet = function(radius, distance, name, imageData, verticalDisplacement, hasShadow, hasArrow){
             this.radius = radius;
             this.hasShadow = hasShadow;
             this.distance = distance;
+            this.hasArrow = hasArrow;
             this.name = name;
             this.image = undefined;
             var scale = 2 * this.radius / imageData.diameter;
@@ -97,19 +98,28 @@
             ctx.lineToInfinityInDirection(1, 0);
             ctx.fill();
         };
+        Planet.prototype.drawShadowName = function(lightDistance){
+            ctx.save();
+            ctx.fillStyle = "#fff";
+            ctx.font = "5px Verdana";
+            var scale = Math.min(0.5, this.radius / 4);
+            ctx.translate(Math.floor(lightDistance / sunRadius) * sunRadius, this.verticalDisplacement);
+            ctx.scale(scale, scale);
+            ctx.fillText("Shadow of " + this.name, 0, 2);
+            ctx.restore();
+        }
         Planet.prototype.addMoon = function(radius, distanceFromPlanet, verticalDisplacement, name, imageData){
             var relativeVerticalDisplacement = verticalDisplacement - this.verticalDisplacement;
             var relativeHorizontalDisplacement = Math.sqrt(distanceFromPlanet * distanceFromPlanet - relativeVerticalDisplacement * relativeVerticalDisplacement);
-            return new Planet(radius, this.distance + relativeHorizontalDisplacement, name, imageData, verticalDisplacement, true);
+            return new Planet(radius, this.distance + relativeHorizontalDisplacement, name, imageData, verticalDisplacement, true, false);
         }
         Planet.prototype.draw = function(date, lightDistance){
-            //ctx.fillStyle = "rgba(255,255,255,0.05)";
-            //fillCircle(this.distance, 0, this.radius * 1000);
 
             if(date < this.lightArrival){
                 this.drawLightAnnouncement(date);
             }else if(this.hasShadow){
                 this.drawShadow(date);
+                this.drawShadowName(lightDistance);
             }
             ctx.fillStyle = "#ff0";
             if(this.image){
@@ -122,24 +132,21 @@
             }else{
               fillCircle(this.distance, this.verticalDisplacement, this.radius);
             }
-            
-            ctx.save();
-            ctx.translate(this.distance, this.arrowDistance);
-            ctx.scale(50, 50);
-            ctx.beginPath();
-            ctx.moveTo(-10, 10);
-            ctx.lineTo(0, 0);
-            ctx.lineTo(10, 10);
-            ctx.moveTo(0, 0);
-            ctx.lineTo(0, 100);
-            ctx.stroke();
-            //ctx.fillStyle = "rgba(255, 255, 0, 0.2)";
-            ctx.font = "20px Verdana";
-            ctx.fillText(this.name, -5, 130);
-            ctx.restore();
-            //ctx.fillStyle = "rgba(255, 255, 0, 0.2)";
-            //ctx.font = "100px Verdana";
-            //ctx.fillText(this.name, this.distance, 200)
+            if(this.hasArrow){
+                ctx.save();
+                ctx.translate(this.distance, this.arrowDistance);
+                ctx.scale(50, 50);
+                ctx.beginPath();
+                ctx.moveTo(-10, 10);
+                ctx.lineTo(0, 0);
+                ctx.lineTo(10, 10);
+                ctx.moveTo(0, 0);
+                ctx.lineTo(0, 100);
+                ctx.stroke();
+                ctx.font = "20px Verdana";
+                ctx.fillText(this.name, -5, 130);
+                ctx.restore();
+            }
         };
         var sun = new Planet(sunRadius, 0, "sun", {
             url: "https://space-facts.com/wp-content/uploads/sun.jpg",
@@ -148,7 +155,7 @@
             x: 75,
             y: 75,
             diameter: 550
-        }, 0, false);
+        }, 0, false, true);
         var earth = new Planet(0.91, 21499, "earth", {
                 url: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/1200px-The_Earth_seen_from_Apollo_17.jpg",
                 width: 1200,
@@ -156,7 +163,7 @@
                 x: 65,
                 y: 61,
                 diameter: 1075
-            }, -70, true);
+            }, -70, true, true);
         var theMoon = earth.addMoon(0.24, 55.26, -72, "the moon", {
             url: "https://space-facts.com/wp-content/uploads/moon.png",
             width: 680,
@@ -173,7 +180,7 @@
                 x: 50,
                 y: 50,
                 diameter: 600
-            }, -90, true),
+            }, -90, true, true),
             new Planet(0.87, 15459, "venus", {
                 url: "https://skyandtelescope.org/wp-content/uploads/Venus_UV_Credit_PLANET-C-Project_Team_600px.jpg",
                 width: 600,
@@ -181,7 +188,7 @@
                 x: 0,
                 y: 0,
                 diameter: 600
-            }, -80, true),
+            }, -80, true, true),
             earth,
             theMoon,
             new Planet(0.48, 31903, "mars", {
@@ -191,7 +198,7 @@
                 x: 86,
                 y: 86,
                 diameter: 1028
-            }, -60, true),
+            }, -60, true, true),
             new Planet(10.05, 111771, "jupiter", {
                 url: "https://space-facts.com/wp-content/uploads/jupiter.png",
                 width: 700,
@@ -199,7 +206,7 @@
                 x: 50,
                 y: 50,
                 diameter: 600
-            }, -40, true),
+            }, -40, true, true),
             new Planet(8.37, 206182, "saturn", {
                 url: "https://cdn.spacetelescope.org/archives/images/screen/heic1917a.jpg",
                 width: 1280,
@@ -207,7 +214,7 @@
                 x: 465,
                 y: 239,
                 diameter: 356
-            }, -15, true),
+            }, -15, true, true),
             new Planet(3.65, 412796, "uranus", {
                 url: "https://space-facts.com/wp-content/uploads/uranus.jpg",
                 width: 700,
@@ -215,7 +222,7 @@
                 x: 51,
                 y: 55,
                 diameter: 600
-            }, 10, true),
+            }, 10, true, true),
             new Planet(3.54, 1095327, "neptune", {
                 url: "https://space-facts.com/wp-content/uploads/neptune.png",
                 width: 700,
@@ -223,7 +230,7 @@
                 x: 51,
                 y: 50,
                 diameter: 600
-            }, 35, true),
+            }, 35, true, true),
             ];
 
         var lightBeamLength = lightMillisecond * 1000 * 60;
@@ -242,8 +249,7 @@
         for(var i=0; i < planets.length; i++){
             planets[i].setStartDate(startDate);
         }
-        function drawLight(lightDistance){
-            var length = Math.min(lightDistance, lightBeamLength);
+        function drawLight(lightDistance, length){
             ctx.fillStyle = gradient;
             ctx.save();
             ctx.translate(sunRadius + lightDistance, 0);
@@ -269,9 +275,8 @@
             for(var i=0; i < planets.length; i++){
                 planets[i].drawBackground();
             }
-            
-            drawLight(lightDistance);
-            //ctx.fillRect(-length, -sunRadius, length, 2 * sunRadius);
+            var length = Math.min(lightDistance, lightBeamLength);
+            drawLight(lightDistance, length);
             var totalSeconds = Math.floor(timeDiff / 1000);
             var seconds = totalSeconds % 60;
             var minutes = Math.floor(totalSeconds / 60) % 60;
