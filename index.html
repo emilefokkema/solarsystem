@@ -4,7 +4,7 @@
       <meta 
     name='viewport' 
     content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'/>
-      <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/emilefokkema/infinite-canvas-2@v0.3-alpha/dist/infinite-canvas.js"></script>
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/ef-infinite-canvas@0.5.0-alpha/dist/infinite-canvas.js"></script>
       <link rel="stylesheet" type="text/css" href="index.css">
   </head>
   <body>
@@ -15,7 +15,7 @@
         var clientRect = canvasEl.getBoundingClientRect();
         canvasEl.setAttribute("width", clientRect.width);
         canvasEl.setAttribute("height", clientRect.height);
-        var infCanvas = new InfiniteCanvas(canvasEl, {rotationEnabled: false});
+        var infCanvas = new InfiniteCanvas(canvasEl, {rotationEnabled: false, units: InfiniteCanvas.CSS_UNITS});
         infCanvas.greedyGestureHandling = true;
         var ctx = infCanvas.getContext("2d");
         var lightMillisecond = 0.0431;
